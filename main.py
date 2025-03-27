@@ -49,6 +49,10 @@ while running:
     #End loop stuff
     draw_hp_bar(screen, player.hp, MAX_HP)
     player.update_invincibility()
+
+    if player.hp <= 0:
+        running = False  # END GAME (Update)
+
     #Keep this last
     pygame.display.flip()
     clock.tick(FPS)
