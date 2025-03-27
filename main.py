@@ -1,30 +1,26 @@
 import pygame
 import sys
 
-# Initialize Pygame
 pygame.init()
 
-# Set up screen
+# Screen setup
 WIDTH, HEIGHT = 600, 400
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Sans Fight - Starter")
+pygame.display.set_caption("Sans Fight - Heart Sprite")
 
-# Clock to control FPS
+# Clock
 clock = pygame.time.Clock()
 
-# Colors
-BLUE = (0, 100, 255)
-BLACK = (0, 0, 0)
-
-# Heart (soul) position
-heart_pos = [WIDTH // 2, HEIGHT // 2]
-heart_size = 20
+# Load heart image
+heart_image = pygame.image.load("heart.png").convert_alpha()
+heart_image = pygame.transform.scale(heart_image, (16, 16))
+heart_rect = heart_image.get_rect(center=(WIDTH // 2, HEIGHT // 2))
 heart_speed = 5
 
-# Game loop
+# Main loop
 running = True
 while running:
-    screen.fill(BLACK)
+    screen.fill((0, 0, 0))  # Black background
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -32,17 +28,17 @@ while running:
 
     # Movement
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
-        heart_pos[0] -= heart_speed
-    if keys[pygame.K_RIGHT]:
-        heart_pos[0] += heart_speed
-    if keys[pygame.K_UP]:
-        heart_pos[1] -= heart_speed
-    if keys[pygame.K_DOWN]:
-        heart_pos[1] += heart_speed
+    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        heart_rect.x -= heart_speed
+    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        heart_rect.x += heart_speed
+    if keys[pygame.K_UP] or keys[pygame.K_w]:
+        heart_rect.y -= heart_speed
+    if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        heart_rect.y += heart_speed
 
-    # Draw heart (placeholder: blue square)
-    pygame.draw.rect(screen, BLUE, (heart_pos[0], heart_pos[1], heart_size, heart_size))
+    # Draw heart
+    screen.blit(heart_image, heart_rect)
 
     pygame.display.flip()
     clock.tick(60)
