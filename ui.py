@@ -21,13 +21,13 @@ def draw_hp_bar(screen, current_hp, max_hp):
 
     # Colors
     bg_color = RED
-    hp_color = (255, 255, 0) if current_hp > 20 else (255, 0, 0)
+    hp_color = (255, 255, 0)
 
     # Draw background
     pygame.draw.rect(screen, bg_color, (x, y, bar_width, bar_height))
 
     # Calculate and draw HP fill
-    hp_ratio = max(current_hp, 0) / max_hp
+    hp_ratio = max(current_hp, 0) / MAX_HP
     fill_width = int(bar_width * hp_ratio)
     pygame.draw.rect(screen, hp_color, (x, y, fill_width, bar_height))
 

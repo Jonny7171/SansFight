@@ -51,8 +51,8 @@ def test_bones(screen, player, bones):
     if player.rect.colliderect(bone.rect):
         player.take_damage(1)
         # Remove bones that are off screen
-        if bone.is_off_screen(WIDTH):
-            bones.remove(bone)
+    if bone.is_off_screen(WIDTH):
+        bones.remove(bone)
     # Check for collisions with the player
     for bone in bones:
         if player.rect.colliderect(bone.rect):

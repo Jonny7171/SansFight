@@ -4,6 +4,7 @@ from settings import *
 from ui import *
 from player import Player
 from attacks import Bone, test_bones
+from death_ui import play_death_animation
 
 
 pygame.init()
@@ -51,7 +52,9 @@ while running:
     player.update_invincibility()
 
     if player.hp <= 0:
-        running = False  # END GAME (Update)
+        play_death_animation(screen, player.rect)
+        running = False  # Or trigger retry/death screen
+
 
     #Keep this last
     pygame.display.flip()
