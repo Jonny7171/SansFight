@@ -2,30 +2,27 @@ import pygame
 import sys
 from settings import *
 from ui import get_fight_box, draw_fight_box
+from player import Player
+
 
 pygame.init()
 
-
-#SETUP
+# Setup
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bad Time Simulator")
 clock = pygame.time.Clock()
 
-#set fight box
+# Fight box
 fight_box = get_fight_box()
 
-# Load Images
-heart_image = pygame.image.load("assets/heart.png").convert_alpha()
-heart_image = pygame.transform.scale(heart_image, (16, 16))
-heart_rect = heart_image.get_rect(center=fight_box.center)
-heart_speed = 5
+# Player setup
+player = Player("assets/heart.png", fight_box.center)
 
 
 
 
 
-
-
+# Game loop
 running = True
 while running:
     screen.fill(BLACK)
@@ -34,26 +31,14 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Move heart
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-        heart_rect.x -= heart_speed
-    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-        heart_rect.x += heart_speed
-    if keys[pygame.K_UP] or keys[pygame.K_w]:
-        heart_rect.y -= heart_speed
-    if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-        heart_rect.y += heart_speed
-
-    # Keep the heart in the box
-    heart_rect.clamp_ip(fight_box)
-
-    # Draw everything
+    # Handle player movement and keep the heart inside the fight box
+    player.handle_movement(keys, fight_box)
+    #draw fight box and player
     draw_fight_box(screen, fight_box)
-    screen.blit(heart_image, heart_rect)
-
+    player.draw(screen)
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(FPS)
 
 pygame.quit()
 sys.exit()
