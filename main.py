@@ -1,8 +1,9 @@
 import pygame
 import sys
 from settings import *
-from ui import get_fight_box, draw_fight_box
+from ui import *
 from player import Player
+from attacks import Bone, test_bones
 
 
 pygame.init()
@@ -17,6 +18,7 @@ fight_box = get_fight_box()
 
 # Player setup
 player = Player("assets/heart.png", fight_box.center)
+bones = []
 
 
 
@@ -33,10 +35,21 @@ while running:
 
     keys = pygame.key.get_pressed()
     # Handle player movement and keep the heart inside the fight box
-    player.handle_movement(keys, fight_box)
+    inner_box = fight_box.inflate(-MARGIN * 2, -MARGIN * 2)
+    player.handle_movement(keys, inner_box)
     #draw fight box and player
     draw_fight_box(screen, fight_box)
     player.draw(screen)
+
+
+
+    #Bones test
+    test_bones(screen, player, bones)
+
+    #End loop stuff
+    draw_hp_bar(screen, player.hp, MAX_HP)
+    player.update_invincibility()
+    #Keep this last
     pygame.display.flip()
     clock.tick(FPS)
 

@@ -1,5 +1,5 @@
 import pygame
-from settings import HEART_SPEED
+from settings import *
 
 class Player:
     @staticmethod
@@ -19,7 +19,11 @@ class Player:
         self.blue_image = self.create_blue_variant(base_image)
         self.image = self.red_image
         self.rect = self.image.get_rect(center=start_pos)
+        self.hp = MAX_HP
+        self.invincible = True
+        self.invincibility_timer = INVINCIBILITY_DURATION
 
+    #MOVEMENT HANDLING (Dont touch this)
     def handle_movement(self, keys, bounds_rect):
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.rect.x -= HEART_SPEED
@@ -33,6 +37,24 @@ class Player:
         # Keep the heart inside the fight box
         self.rect.clamp_ip(bounds_rect)
 
+
+    #DAMAGE HANDLING
+    def take_damage(self, amount):
+        if not self.invincible:
+            self.hp -= amount
+            self.invincible = True
+            self.invincibility_timer = INVINCIBILITY_DURATION
+            print(f"Player took {amount} damage! HP: {self.hp}")
+
+    #Invincibility handling (not used yet)
+    def update_invincibility(self):
+        if self.invincible:
+            self.invincibility_timer -= 1
+            if self.invincibility_timer <= 0:
+                self.invincible = False
+
+
+    #little things
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
