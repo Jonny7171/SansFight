@@ -38,12 +38,8 @@ def load_menu_assets():
     ]
     return buttons
 
-
+#draw menu and dialogue box
 def draw_menu(screen, buttons, menu_index):
-    """
-    Draw the 4 menu buttons (FIGHT, ACT, ITEM, MERCY) along the bottom,
-    highlighting the one at 'menu_index' with the yellow version.
-    """
     #draw box
     box_width = 500
     box_height = 150
@@ -55,7 +51,6 @@ def draw_menu(screen, buttons, menu_index):
     menu_y = screen.get_height() - buttons[0][0].get_height() - margin
 
     gap = 20
-    # Each button pair has the same size, so let's get the width of the orange one:
     btn_width  = buttons[0][0].get_width()
     btn_height = buttons[0][0].get_height()
 

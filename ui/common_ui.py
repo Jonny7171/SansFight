@@ -24,7 +24,6 @@ def draw_hp_bar(screen, current_hp, max_hp):
     # Fonts for "HP" and numeric value
     font_HP = pygame.font.Font("assets/fonts/8bit_wonder.ttf", 9)
     font_num = pygame.font.Font("assets/fonts/health.ttf", 20)
-    # font_num.set_bold(True)  # if your font supports bold
 
     # Render "HP"
     hp_label = font_HP.render("HP", False, WHITE)
