@@ -7,7 +7,7 @@ from ui.common_ui import draw_hp_bar
 from player import Player
 from attacks import test_bones
 from ui.death_ui import play_death_animation
-from ui.act_ui import update_act_state, draw_act_screen, act_substate
+from ui.act_ui import draw_act_screen
 
 pygame.init()
 
@@ -59,8 +59,6 @@ while running:
                         bones = []
                     elif menu_index == 1:  # ACT
                         current_state = STATE_ACT
-                        # Set flag to skip any ACT update on the first frame
-                        skip_act_update = True
                     elif menu_index == 2:  # ITEM
                         # ITEM logic here
                         pass
@@ -71,6 +69,7 @@ while running:
                 if event.key == pygame.K_RETURN:
                     enter_processed = False
 
+        #ACT STARTS HERE
         # ACT state event handling:
         elif current_state == STATE_ACT:
             if event.type == pygame.KEYDOWN:
@@ -84,7 +83,13 @@ while running:
                 if event.key in [pygame.K_ESCAPE, pygame.K_RSHIFT]:
                     current_state = STATE_ACT
                 elif event.key == pygame.K_RETURN:
+                    current_state = STATE_ACT_RESPONSE
+        
+        elif current_state == STATE_ACT_RESPONSE:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
                     current_state = STATE_MENU
+        #ACT ENDS HERE
 
         # ATTACK state event handling:
         elif current_state == STATE_ATTACK:
@@ -100,7 +105,7 @@ while running:
         draw_hp_bar(screen, player.hp, MAX_HP)
 
     #IN THE ACT STATE
-    elif current_state == STATE_ACT or current_state == STATE_ACT_SANS:
+    elif current_state == STATE_ACT or current_state == STATE_ACT_SANS or current_state == STATE_ACT_RESPONSE:
         # Load and scale the heart image.
         heart_image = pygame.image.load("assets/heart.png").convert_alpha()
         heart_image = pygame.transform.scale(heart_image, (16, 16))
