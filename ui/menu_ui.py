@@ -39,8 +39,8 @@ def load_menu_assets():
     return buttons
 
 #draw menu and dialogue box
-def draw_menu(screen, buttons, menu_index):
-    #draw box
+def draw_menu(screen, buttons, menu_index, show_dialouge=False):
+    # Draw the menu box and buttons as before
     box_width = 500
     box_height = 150
     box_x = (WIDTH - box_width) // 2
@@ -62,9 +62,50 @@ def draw_menu(screen, buttons, menu_index):
 
     x = start_x
     for i, (orange_img, yellow_img) in enumerate(buttons):
-        # If i == menu_index, draw the yellow version; else draw the orange
+        # Draw yellow for the selected button, orange otherwise
         if i == menu_index:
             screen.blit(yellow_img, (x, menu_y))
         else:
             screen.blit(orange_img, (x, menu_y))
         x += btn_width + gap
+
+    # ---- Typewriter Dialogue Effect ----
+    if show_dialouge:
+        dialogue_lines = [
+            "* You felt your sins crawling",
+            "  on your back."
+        ]
+
+        # Initialize typewriter attributes if needed or if just entered
+        if not hasattr(draw_menu, 'last_letter_time'):
+            draw_menu.last_letter_time = pygame.time.get_ticks()
+            draw_menu.dialogue_index = 0
+            draw_menu.dialogue_full = [""] * len(dialogue_lines)
+            draw_menu.current_line = 0
+
+        # Set delay between letters (in milliseconds)
+        letter_delay = 50
+        now = pygame.time.get_ticks()
+        if (now - draw_menu.last_letter_time) > letter_delay:
+            if draw_menu.current_line < len(dialogue_lines):
+                line = dialogue_lines[draw_menu.current_line]
+                if draw_menu.dialogue_index < len(line):
+                    draw_menu.dialogue_full[draw_menu.current_line] += line[draw_menu.dialogue_index]
+                    draw_menu.dialogue_index += 1
+                else:
+                    # Move to the next line when the current one is done
+                    draw_menu.current_line += 1
+                    draw_menu.dialogue_index = 0
+            draw_menu.last_letter_time = now
+
+        # Create a font for the dialogue (adjust size/path as needed)
+        dialogue_font = pygame.font.Font("assets/fonts/health.ttf", 27)
+
+        # Render and position each line of dialogue
+        dialogue_x = 80
+        dialogue_y = 148
+        line_spacing = 30  # Adjust spacing between lines
+
+        for i, line in enumerate(draw_menu.dialogue_full):
+            dialogue_surface = dialogue_font.render(line, True, WHITE)
+            screen.blit(dialogue_surface, (dialogue_x, dialogue_y + i * line_spacing))
