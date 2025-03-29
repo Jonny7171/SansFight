@@ -1,6 +1,6 @@
 # fight_ui.py
 import pygame
-from settings import WIDTH, HEIGHT, WHITE
+from settings import *
 
 def get_fight_box(box_width=150, box_height=150):
     """
@@ -8,7 +8,7 @@ def get_fight_box(box_width=150, box_height=150):
     Adjust size or position as you like.
     """
     box_x = (WIDTH - box_width) // 2
-    box_y = (HEIGHT - box_height) // 2
+    box_y = BOX_Y
     return pygame.Rect(box_x, box_y, box_width, box_height)
 
 def draw_fight_box(screen, fight_box):
