@@ -4,10 +4,10 @@ from settings import *
 
 #draw health bar
 def draw_hp_bar(screen, current_hp, max_hp):
-    bar_width = 200
-    bar_height = 20
-    x = 200
-    y = HEIGHT - 120  # ~120px from the top of the screen bottom
+    bar_width = HP_WIDTH
+    bar_height = HP_HEIGHT
+    x = HP_X
+    y = HP_Y
 
     # Bar colors
     bg_color = RED

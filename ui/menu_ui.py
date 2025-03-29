@@ -41,15 +41,14 @@ def load_menu_assets():
 #draw menu and dialogue box
 def draw_menu(screen, buttons, menu_index, show_dialouge=False):
     # Draw the menu box and buttons as before
-    box_width = 500
-    box_height = 150
-    box_x = (WIDTH - box_width) // 2
-    box_y = (HEIGHT - box_height) // 2
+    box_width = BOX_WIDTH
+    box_height = BOX_HEIGHT
+    box_x = BOX_X
+    box_y = BOX_Y
     menu_box = pygame.Rect(box_x, box_y, box_width, box_height)
     pygame.draw.rect(screen, WHITE, menu_box, width=5)
     margin = 10
     menu_y = screen.get_height() - buttons[0][0].get_height() - margin
-
     gap = 20
     btn_width  = buttons[0][0].get_width()
     btn_height = buttons[0][0].get_height()
@@ -83,7 +82,7 @@ def draw_menu(screen, buttons, menu_index, show_dialouge=False):
             draw_menu.dialogue_full = [""] * len(dialogue_lines)
             draw_menu.current_line = 0
 
-        # Set delay between letters (in milliseconds)
+        # Set delay
         letter_delay = 50
         now = pygame.time.get_ticks()
         if (now - draw_menu.last_letter_time) > letter_delay:
@@ -98,13 +97,13 @@ def draw_menu(screen, buttons, menu_index, show_dialouge=False):
                     draw_menu.dialogue_index = 0
             draw_menu.last_letter_time = now
 
-        # Create a font for the dialogue (adjust size/path as needed)
+        # Create a font for the dialogue
         dialogue_font = pygame.font.Font("assets/fonts/health.ttf", 27)
 
         # Render and position each line of dialogue
-        dialogue_x = 80
-        dialogue_y = 148
-        line_spacing = 30  # Adjust spacing between lines
+        dialogue_x = DIALOGUE_X
+        dialogue_y = DIALOGUE_Y
+        line_spacing = SPACING
 
         for i, line in enumerate(draw_menu.dialogue_full):
             dialogue_surface = dialogue_font.render(line, True, WHITE)

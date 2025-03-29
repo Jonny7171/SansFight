@@ -39,13 +39,13 @@ def draw_item_screen(screen, heart_image, current_state, events, player):
             if now - draw_item_screen.time_entered_item < ignore_threshold:
                 continue
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
+                if (event.key == pygame.K_w or event.key == pygame.K_UP) :
                     draw_item_screen.selected_index = (draw_item_screen.selected_index - 2) % len(options)
-                elif event.key == pygame.K_s:
+                elif (event.key == pygame.K_s or event.key == pygame.K_DOWN):
                     draw_item_screen.selected_index = (draw_item_screen.selected_index + 2) % len(options)
-                elif event.key == pygame.K_a:
+                elif (event.key == pygame.K_a or event.key == pygame.K_LEFT):
                     draw_item_screen.selected_index = (draw_item_screen.selected_index - 1) % len(options)
-                elif event.key == pygame.K_d:
+                elif (event.key == pygame.K_d or event.key == pygame.K_RIGHT):
                     draw_item_screen.selected_index = (draw_item_screen.selected_index + 1) % len(options)
                 # Consume food and remove the selected option
                 elif event.key == pygame.K_RETURN:
@@ -71,22 +71,22 @@ def draw_item_screen(screen, heart_image, current_state, events, player):
                             draw_item_screen.selected_index = 0
 
         # Coordinates for the top-left (index 0) option
-        option1_x = 101
-        option1_y = 148
+        heart_x = HEART_X
+        heart_y = HEART_Y
+        option1_x = heart_x + heart_image.get_width() + 10
+        option1_y = DIALOGUE_Y
 
-        heart_x = 0
-        heart_y = 0
 
         # Only draw if we still have options
         if len(options) > 0:
             for i, option in enumerate(options):
-                # 2x2 grid layout:
+                # 2x2 grid
                 x = option1_x + (i % 2) * 240
                 y = option1_y + (i // 2) * 65
 
                 if i == draw_item_screen.selected_index:
                     heart_x = x - 26
-                    heart_y = y + 2
+                    heart_y = y + 8
 
                 option_text = font.render(option, True, WHITE)
                 screen.blit(option_text, (x, y))

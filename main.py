@@ -25,13 +25,19 @@ clock = pygame.time.Clock()
 current_state = STATE_MENU
 running = True
 
-# Load menu assets (buttons with both color versions)
+# Load menu assets
 buttons = load_menu_assets()
 menu_index = 0
 
+#Megalovania music
+pygame.mixer.init()
+pygame.mixer.music.load("sounds/megalovania.ogg")
+pygame.mixer.music.play(-1)  # Loop forever
+
+
 # Load Sans assets
 sans_assets = load_sans_assets()
-current_sans_sprite = sans_assets["normal"]  # set an initial sprite
+current_sans_sprite = sans_assets["normal"]
 
 # Create player
 dummy_fight_box = get_fight_box() 

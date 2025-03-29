@@ -4,8 +4,8 @@ from settings import *
 
 
 def draw_mercy_screen(screen, heart_image, current_state):
-    heart_x = 75
-    heart_y = 155
+    heart_x = HEART_X
+    heart_y = HEART_Y
     # Load your font (adjust the path/size as needed)
     font = pygame.font.Font("assets/fonts/health.ttf", 27)
     
@@ -20,5 +20,5 @@ def draw_mercy_screen(screen, heart_image, current_state):
         mercy_text = "* Spare"
         text_surface = font.render(mercy_text, False, WHITE)
         text_x = heart_x + heart_image.get_width() + 10
-        text_y = heart_y - 7
+        text_y = DIALOGUE_Y
         screen.blit(text_surface, (text_x, text_y))
