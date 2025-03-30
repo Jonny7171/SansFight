@@ -1,0 +1,46 @@
+class SansGasterBlasterAttack:
+    def __init__(self, player):
+        self.blaster_list = []
+        self.timer = 0
+        self.player = player
+        self.spawn_next = 0  # when to spawn next blaster
+
+    def update(self):
+        now = pygame.time.get_ticks()
+        self.timer += 1
+
+        # Spawn blasters every 1 second for now
+        if now > self.spawn_next:
+            self.spawn_next = now + 1000
+            self.spawn_blaster()
+
+        for blaster in self.blaster_list[:]:
+            blaster.update()
+            if blaster.is_firing():
+                # spawn beam, apply damage, or play sound
+                pass
+
+    def draw(self, screen):
+        for blaster in self.blaster_list:
+            blaster.draw(screen)
+
+    def spawn_blaster(self):
+        # Random angle around the player
+        angle = random.uniform(0, 360)
+        distance = 500  # how far from the player to spawn
+        radians = math.radians(angle)
+
+        # Position from angle
+        x = self.player.rect.centerx + math.cos(radians) * distance
+        y = self.player.rect.centery - math.sin(radians) * distance  # minus for Pygame Y-axis
+
+        spawn_pos = (x, y)
+        target_pos = self.player.rect.center
+
+        blaster = GasterBlaster(
+            start_pos=spawn_pos,
+            target_pos=target_pos,
+            open_delay=400,
+            fire_delay=700
+        )
+        self.blaster_list.append(blaster)

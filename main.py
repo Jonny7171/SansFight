@@ -5,23 +5,20 @@ from ui.fight_ui import get_fight_box, draw_fight_box
 from ui.menu_ui import load_menu_assets, draw_menu
 from ui.common_ui import draw_hp_bar
 from player import Player
-from attacks import *
+from Bone_Class import *
 from ui.death_ui import play_death_animation
 from ui.act_ui import draw_act_screen
 from ui.item_ui import draw_item_screen
 from ui.mercy_ui import draw_mercy_screen
 from ui.sans_ui import load_sans_assets, draw_sans
+from attacks.Sans_bones_attack_low import Sans_Bone_Gap_Low
+from attacks.sans_gaster_blaster_attack import sans_gaster_blaster_attack
 
-
-
-
-
+#setup
 pygame.init()
-
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bad Time Simulator")
 clock = pygame.time.Clock()
-
 current_state = STATE_MENU
 running = True
 
@@ -33,7 +30,6 @@ menu_index = 0
 pygame.mixer.init()
 pygame.mixer.music.load("sounds/megalovania.ogg")
 pygame.mixer.music.play(-1)  # Loop forever
-
 
 # Load Sans assets
 sans_assets = load_sans_assets()
@@ -87,6 +83,10 @@ while running:
                             current_attack = Sans_Bone_Gap_Low()
                             player.set_blue_mode(True)
                             fight_box = get_fight_box(250)
+                        elif attack_state == 2:
+                            current_attack = sans_gaster_blaster_attack(player)
+                            player.set_blue_mode(False)
+                            fight_box = get_fight_box(350)
                         current_state = STATE_ATTACK
                         player.rect.center = fight_box.center
                         bones = []
@@ -193,12 +193,12 @@ while running:
         if player.hp <= 0:
             current_state = STATE_GAME_OVER
 
-        # (Optional) Check if the attack is finished, then transition to the next state:
+        # Once attack is finished, move to next
         if current_attack.is_done():
-            # For example, go back to the menu or proceed to the next attack
+            attack_state += 1
             current_attack = None
             player.set_blue_mode(False)
-            current_state = STATE_MENU  # or a different state
+            current_state = STATE_MENU
 
     elif current_state == STATE_SPARE:
         # Load and scale the heart image.
