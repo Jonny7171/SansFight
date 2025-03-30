@@ -86,8 +86,8 @@ while running:
                         if attack_state == 1:
                             current_attack = Sans_Bone_Gap_Low()
                             player.set_blue_mode(True)
+                            fight_box = get_fight_box(250)
                         current_state = STATE_ATTACK
-                        fight_box = get_fight_box()
                         player.rect.center = fight_box.center
                         bones = []
                     elif menu_index == 1:  # ACT

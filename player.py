@@ -21,6 +21,9 @@ class Player:
         self.hp = MAX_HP
         self.invincible = False
         self.invincibility_timer = INVINCIBILITY_DURATION
+        self.pause_at_peak = False
+        self.peak_pause_start = 0
+        self.peak_pause_duration = 70  # milliseconds
 
         # Blue mode properties
         self.blue_mode = False
@@ -46,22 +49,42 @@ class Player:
             if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.rect.x += HEART_SPEED
 
-            # Jump: if on ground and up is pressed, set an upward velocity.
+            # Jump
             if self.on_ground and (keys[pygame.K_UP] or keys[pygame.K_w]):
-                self.vel_y = -12  # adjust jump strength as needed
+                self.jump_start_time = pygame.time.get_ticks()  # Record the time jump started
+                self.vel_y = -4  # Initial jump strength
                 self.on_ground = False
+                jumped_flag = True
 
-            # Apply gravity:
-            self.vel_y += 0.8  # gravity constant; tweak for feel
-            self.rect.y += int(self.vel_y)
+            # Check if the jump key is still being held and adjust velocity.
+            if not self.on_ground and (keys[pygame.K_UP] or keys[pygame.K_w]):
+                jump_duration = pygame.time.get_ticks() - self.jump_start_time
+                if jump_duration < 200:  # Allow stronger jump for up to 200ms
+                    self.vel_y -= 0.7  # Incremental boost, not set on it yet
 
-            # Check if landed (assume bounds_rect.bottom is the "floor")
+            if not self.on_ground and self.vel_y <= 0 and self.vel_y >= -0.5 and not self.pause_at_peak:
+                    self.pause_at_peak = True
+                    self.peak_pause_start = pygame.time.get_ticks()
+
+            
+            if self.pause_at_peak:
+                now = pygame.time.get_ticks()
+                if now - self.peak_pause_start >= self.peak_pause_duration:
+                    self.pause_at_peak = False  # end the pause
+                else:
+                    return  # skip gravity update this frame
+            # gravity effect
+            if not self.pause_at_peak:
+                self.vel_y += 0.5  # gravity constan, can be adjusted for feel
+                self.rect.y += int(self.vel_y)
+
+            # Check if landed
             if self.rect.bottom > bounds_rect.bottom:
                 self.rect.bottom = bounds_rect.bottom
                 self.vel_y = 0
                 self.on_ground = True
 
-        # Clamp the player inside the bounds_rect (horizontally and vertically)
+        # Clamp the player inside fight area
         self.rect.clamp_ip(bounds_rect)
 
     def take_damage(self, amount):
@@ -69,7 +92,7 @@ class Player:
             self.hp -= amount
             self.invincible = False
             self.invincibility_timer = INVINCIBILITY_DURATION
-            print(f"Player took {amount} damage! HP: {self.hp}")
+            #print(f"Player took {amount} damage! HP: {self.hp}")
 
     def update_invincibility(self):
         if self.invincible:
@@ -95,7 +118,6 @@ class Player:
         self.blue_mode = mode
         if mode:
             self.set_color_blue()
-            # Reset vertical speed and ground flag for a fresh start.
             self.vel_y = 0
             self.on_ground = True
         else:

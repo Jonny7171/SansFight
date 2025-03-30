@@ -8,15 +8,11 @@ class Bone:
         # Load the bone image
         self.image = pygame.image.load(image_path).convert_alpha()
         
-        # Get original size and compute scale factor based on the desired height.
-        orig_width, orig_height = self.image.get_size()
-        scale_factor = desired_height / orig_height
-        #desired_width = int(orig_width * scale_factor)
         
         # Scale proportionally
-        self.image = pygame.transform.scale(self.image, (desired_width, desired_height))
+        self.image = pygame.transform.scale(self.image, (desired_height, desired_width))
         
-        # Optionally rotate the image. If rotation is None, skip rotating.
+        # Optionally rotate the image. 
         if rotation is not None:
             self.image = pygame.transform.rotate(self.image, rotation)
         
@@ -24,14 +20,25 @@ class Bone:
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = speed
 
-    def update(self):
-        self.rect.x += self.speed
+    def update(self, direction="left"):
+        if direction == "left":
+            self.rect.x += self.speed
+        elif direction == "right":
+            self.rect.x -= self.speed
+        elif direction == "up":
+            self.rect.y -= self.speed
+        elif direction == "down":
+            self.rect.y += self.speed
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
-    def is_off_screen(self, screen_width):
-        return self.rect.right < 0 or self.rect.left > screen_width
+    def is_off_screen(self, screen_width, buffer=50):
+        if self.speed < 0:  # Moving left
+            return self.rect.right < -buffer  # fully off left side
+        elif self.speed > 0:  # Moving right
+            return self.rect.left > screen_width + buffer  # fully off right side
+        return False  # Not moving? Don't remove
 
 
 
@@ -53,8 +60,7 @@ def test_bones(screen, player, bones):
             player.take_damage(1)
             print("Collision detected!")
         # Remove the bone if it's off screen
-        if bone.is_off_screen(WIDTH):
-            bones.remove(bone)
+
 
 
 class Sans_Bone_Gap_Low:
@@ -64,34 +70,93 @@ class Sans_Bone_Gap_Low:
         self.spawn_columns()
 
     def spawn_columns(self):
-        columns_x = [500, 600, 700]  # x positions for each column
-        gap_y = 200                  # top of the gap
-        gap_height = 60             # vertical size of the gap
-        speed = -4                  # bone travel speed
+        columns_x = [500, 700, 900, 1100, 1300, 1500, 1700]  # x positions for each column
+        speed = -2
+
+        # Fight box boundaries:
+        box_top = 150
+        box_bottom = 300
+
+        top_bone_height = 110
+        bottom_bone_height = 35
+        
+        # For a thin bone, reduce the width. For a thicker bone, increase it.
+        bone_width = 30
 
         for x in columns_x:
-            y = 0
-            while y < gap_y:
-                bone = Bone(x, y, speed=speed, image_path="assets/bone.webp")
-                self.bones.append(bone)
-                y += bone.rect.height  # stack next bone below
-                y2 = gap_y + gap_height
-            while y2 < 400:
-                bone = Bone(x, y2, speed=speed, image_path="assets/bone.webp")
-                self.bones.append(bone)
-                y2 += bone.rect.height
+            # ---- TOP bone ----
+            top_bone_y = box_top  # spawn exactly at the top of the box
+            top_bone = Bone(
+                x, 
+                top_bone_y-8, 
+                speed=speed, 
+                image_path="assets/bone.webp",
+                desired_height=top_bone_height, 
+                desired_width=bone_width, 
+                rotation=90  # rotate 90 if the original bone is horizontal
+            )
+            self.bones.append(top_bone)
+
+            # ---- BOTTOM bone ----
+            # Position it so it sits at the bottom of the box
+            bottom_bone_y = box_bottom - bottom_bone_height
+            bottom_bone = Bone(
+                x, 
+                bottom_bone_y, 
+                speed=speed, 
+                image_path="assets/bone.webp",
+                desired_height=bottom_bone_height, 
+                desired_width=bone_width, 
+                rotation=90
+            )
+            self.bones.append(bottom_bone)
+
+        # Add mirrored bones coming from left to right
+        mirrored_columns_x = [100, -100, -300, -500, -700, -900, -1100]  # x positions for mirrored columns
+        mirrored_speed = 2
+
+        for x in mirrored_columns_x:
+            # ---- TOP mirrored bone ----
+            top_bone_y = box_top  # spawn exactly at the top of the box
+            top_bone = Bone(
+                x, 
+                top_bone_y-8, 
+                speed=mirrored_speed, 
+                image_path="assets/bone.webp",
+                desired_height=top_bone_height, 
+                desired_width=bone_width, 
+                rotation=90  # rotate 90 if the original bone is horizontal
+            )
+            self.bones.append(top_bone)
+
+            # ---- BOTTOM mirrored bone ----
+            # Position it so it sits at the bottom of the box
+            bottom_bone_y = box_bottom - bottom_bone_height
+            bottom_bone = Bone(
+                x, 
+                bottom_bone_y, 
+                speed=mirrored_speed, 
+                image_path="assets/bone.webp",
+                desired_height=bottom_bone_height, 
+                desired_width=bone_width, 
+                rotation=90
+            )
+            self.bones.append(bottom_bone)
+
 
     def update(self):
         self.timer += 1
-        # Move all bones, remove if off-screen
         for bone in self.bones[:]:
             bone.update()
             if bone.is_off_screen(WIDTH):
                 self.bones.remove(bone)
 
     def draw(self, screen):
+        FIGHT_BOX_RECT = pygame.Rect(175, 150, 250, 150)
         for bone in self.bones:
-            bone.draw(screen)
+            bone.update()
+            if FIGHT_BOX_RECT is None or bone.rect.colliderect(FIGHT_BOX_RECT):
+                bone.draw(screen)
 
     def check_collision(self, player_rect):
         """
@@ -99,10 +164,10 @@ class Sans_Bone_Gap_Low:
         We can shrink the bone rect if needed to avoid bounding box issues.
         """
         for bone in self.bones:
-            shrunk_rect = bone.rect.inflate(-10, -10)  # tweak as needed
+            shrunk_rect = bone.rect.inflate(-15, -30)  # NOT PERFECT YET
             if shrunk_rect.colliderect(player_rect):
                 return True
         return False
 
     def is_done(self):
-        return self.timer > 300
+        return self.timer > 450
