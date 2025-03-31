@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 from Gaster_class import GasterBlaster
+from settings import *
 
 class sans_gaster_blaster_attack:
     def __init__(self, player):
@@ -16,7 +17,7 @@ class sans_gaster_blaster_attack:
 
         # Spawn new blaster every second
         if now > self.spawn_next:
-            self.spawn_next = now + 1000
+            self.spawn_next = now + 2000
             self.spawn_blaster()
 
         for blaster in self.blaster_list[:]:
@@ -31,30 +32,80 @@ class sans_gaster_blaster_attack:
             blaster.draw(screen)
 
     def spawn_blaster(self):
+        # Player center
+        player_x = self.player.rect.centerx
+        player_y = self.player.rect.centery
+
+        # Fight box boundaries
+        fight_box_left = 125
+        fight_box_top = 150
+        fight_box_right = 475
+        fight_box_bottom = 300
+
+        # Expanded fight box boundaries (50 pixels margin)
+        margin = 50
+        exp_left = fight_box_left - margin   # 75
+        exp_top = fight_box_top - margin     # 100
+        exp_right = fight_box_right + margin # 525
+        exp_bottom = fight_box_bottom + margin  # 350
+
+        # Choose a random angle (in degrees) and convert to radians
         angle = random.uniform(0, 360)
-        distance = 500
         radians = math.radians(angle)
 
-        # Spawn circle around player
-        x = self.player.rect.centerx + math.cos(radians) * distance
-        y = self.player.rect.centery - math.sin(radians) * distance
+        # Our coordinate system: x increases right, y increases down.
+        dir_x = math.cos(radians)
+        dir_y = -math.sin(radians)
 
-        spawn_pos = (x, y)
-        # We move to 100 px away from player so we appear on screen
-        # or maybe directly to the box boundary. Tweak to taste.
-        approach_distance = 100  
-        approach_x = self.player.rect.centerx + math.cos(radians) * approach_distance
-        approach_y = self.player.rect.centery - math.sin(radians) * approach_distance
-        move_target = (approach_x, approach_y)
+        # Compute t-values for the intersection of the ray from the player with the expanded rectangle.
+        t_candidates = []
+        if dir_x < 0:
+            t_left = (exp_left - player_x) / dir_x
+            if t_left > 0:
+                t_candidates.append(t_left)
+        if dir_x > 0:
+            t_right = (exp_right - player_x) / dir_x
+            if t_right > 0:
+                t_candidates.append(t_right)
+        if dir_y < 0:
+            t_top = (exp_top - player_y) / dir_y
+            if t_top > 0:
+                t_candidates.append(t_top)
+        if dir_y > 0:
+            t_bottom = (exp_bottom - player_y) / dir_y
+            if t_bottom > 0:
+                t_candidates.append(t_bottom)
 
+        if t_candidates:
+            t = min(t_candidates)
+        else:
+            t = 180  # Fallback
+
+        approach_target = (player_x + dir_x * t, player_y + dir_y * t)
+
+        # Spawn position: 500 pixels away from the player in the same direction.
+        spawn_distance = 500
+        spawn_pos = (player_x + dir_x * spawn_distance, player_y + dir_y * spawn_distance)
+
+        # Calculate the angle for the blaster's "mouth" to face the player.
+        dx = player_x - spawn_pos[0]
+        dy = player_y - spawn_pos[1]
+        raw_angle = math.degrees(math.atan2(-dy, dx))
+        orientation_degrees = raw_angle  # Adjust so the bottom of the sprite points toward the player
+
+        # Create and add the blaster with its orientation fixed at spawn.
         blaster = GasterBlaster(
             start_pos=spawn_pos,
-            target_pos=move_target,   # We'll move here
+            target_pos=approach_target,
             open_delay=400,
             fire_delay=700,
-            scale=0.2
+            scale=0.2,
+            orientation=orientation_degrees  # Pass the calculated orientation
         )
         self.blaster_list.append(blaster)
+
+
+
 
     def distance_point_to_segment(self, px, py, ax, ay, bx, by):
         """

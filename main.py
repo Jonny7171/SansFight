@@ -45,7 +45,7 @@ fight_box = None
 bones = []
 
 #attack state variables
-attack_state = 1
+attack_state = 2 #SET TO 1 AFTER
 
 
 
