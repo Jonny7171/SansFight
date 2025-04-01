@@ -13,6 +13,7 @@ from ui.mercy_ui import draw_mercy_screen
 from ui.sans_ui import load_sans_assets, draw_sans
 from attacks.Sans_bones_attack_low import Sans_Bone_Gap_Low
 from attacks.sans_gaster_blaster_attack import sans_gaster_blaster_attack
+from attacks.sansSlamAttack import SansSlamAttack
 
 def main():
     global current_state, current_attack, attack_state, fight_box, sans_visible, bones, player
@@ -42,20 +43,24 @@ def main():
     fight_box = None
     bones = []
 
-    attack_state = 1
+    attack_state = 3
     current_attack = None
 
     def begin_attack():
         global current_state, current_attack, attack_state, fight_box, sans_visible, bones, player
         if attack_state == 1:
+            fight_box = get_fight_box(250)  # First create fight_box
             current_attack = Sans_Bone_Gap_Low()
             player.set_blue_mode(True)
-            fight_box = get_fight_box(250)
         elif attack_state == 2:
+            fight_box = get_fight_box(350)  # First create fight_box
             current_attack = sans_gaster_blaster_attack(player)
             sans_visible = False
             player.set_blue_mode(False)
-            fight_box = get_fight_box(350)
+        elif attack_state == 3:
+            fight_box = get_fight_box(150)  # Create fight_box FIRST
+            current_attack = SansSlamAttack(player, fight_box, direction=None)
+            player.set_blue_mode(True)
         current_state = STATE_ATTACK
         player.rect.center = fight_box.center
         bones = []
@@ -164,13 +169,12 @@ def main():
 
         elif current_state == STATE_ATTACK:
             keys = pygame.key.get_pressed()
-            if fight_box:
+            if fight_box and not isinstance(current_attack, SansSlamAttack):
                 inner_box = fight_box.inflate(-MARGIN * 2, -MARGIN * 2)
                 player.handle_movement(keys, inner_box)
 
             draw_fight_box(screen, fight_box)
             player.draw(screen)
-
             current_attack.update()
             current_attack.draw(screen)
 
@@ -188,6 +192,7 @@ def main():
                 player.set_blue_mode(False)
                 sans_visible = True
                 current_state = STATE_MENU
+                player.velocity = pygame.Vector2(0, 0)
 
         elif current_state == STATE_SPARE:
             heart_image = pygame.image.load("assets/heart.png").convert_alpha()

@@ -20,7 +20,6 @@ class Sans_Bone_Gap_Low:
         top_bone_height = 110
         bottom_bone_height = 35
         
-        # For a thin bone, reduce the width. For a thicker bone, increase it.
         bone_width = 30
 
         for x in columns_x:

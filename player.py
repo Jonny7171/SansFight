@@ -1,5 +1,9 @@
 import pygame
 from settings import *
+from attacks.blue_movement import handle_blue_mode_movement
+
+
+
 
 class Player:
     @staticmethod
@@ -28,9 +32,10 @@ class Player:
         # Blue mode properties
         self.blue_mode = False
         self.vel_y = 0
+        self.vel_x = 0
         self.on_ground = True  # assume starting on ground
 
-    def handle_movement(self, keys, bounds_rect):
+    def handle_movement(self, keys, bounds_rect, direction = "down"):
         if not self.blue_mode:
             # Red heart: free movement
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -42,50 +47,7 @@ class Player:
             if keys[pygame.K_DOWN] or keys[pygame.K_s]:
                 self.rect.y += HEART_SPEED
         else:
-            # Blue heart: horizontal movement and jumping with gravity.
-            # Horizontal movement:
-            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-                self.rect.x -= HEART_SPEED
-            if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-                self.rect.x += HEART_SPEED
-
-            # Jump
-            if self.on_ground and (keys[pygame.K_UP] or keys[pygame.K_w]):
-                self.jump_start_time = pygame.time.get_ticks()  # Record the time jump started
-                self.vel_y = -4  # Initial jump strength
-                self.on_ground = False
-                jumped_flag = True
-
-            # Check if the jump key is still being held and adjust velocity.
-            if not self.on_ground and (keys[pygame.K_UP] or keys[pygame.K_w]):
-                jump_duration = pygame.time.get_ticks() - self.jump_start_time
-                if jump_duration < 200:  # Allow stronger jump for up to 200ms
-                    self.vel_y -= 0.7  # Incremental boost, not set on it yet
-
-            if not self.on_ground and self.vel_y <= 0 and self.vel_y >= -0.5 and not self.pause_at_peak:
-                    self.pause_at_peak = True
-                    self.peak_pause_start = pygame.time.get_ticks()
-
-            
-            if self.pause_at_peak:
-                now = pygame.time.get_ticks()
-                if now - self.peak_pause_start >= self.peak_pause_duration:
-                    self.pause_at_peak = False  # end the pause
-                else:
-                    return  # skip gravity update this frame
-            # gravity effect
-            if not self.pause_at_peak:
-                self.vel_y += 0.5  # gravity constan, can be adjusted for feel
-                self.rect.y += int(self.vel_y)
-
-            # Check if landed
-            if self.rect.bottom > bounds_rect.bottom:
-                self.rect.bottom = bounds_rect.bottom
-                self.vel_y = 0
-                self.on_ground = True
-
-        # Clamp the player inside fight area
-        self.rect.clamp_ip(bounds_rect)
+            handle_blue_mode_movement(self, keys, bounds_rect, direction)
 
     def take_damage(self, amount):
         if not self.invincible:
