@@ -51,7 +51,9 @@ def draw_item_screen(screen, heart_image, current_state, events, player):
                 elif event.key == pygame.K_RETURN:
                     if len(options) > 0:
                         selected_option = options[draw_item_screen.selected_index]
+                        print (selected_option)
                         if selected_option == "Pie":
+                            print ("HELLO")
                             player.hp = min(player.hp + 90, MAX_HP)
                             print("Pie consumed!")
                         elif selected_option == "I. Noodels":

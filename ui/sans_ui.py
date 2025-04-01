@@ -26,7 +26,9 @@ def load_sans_assets():
         "wink": sans_wink,
     }
 
-def draw_sans(screen, sans_sprite, current_sans_sprite_name, fight_box=None):
+def draw_sans(screen, sans_sprite, current_sans_sprite_name, fight_box=None, sans_visible = True):
+    if not sans_visible:
+        return
     if current_sans_sprite_name == "normal":
         x = WIDTH // 2 - sans_sprite.get_width() // 2
         y = SANS_NORMAL_Y
