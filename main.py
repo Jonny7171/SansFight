@@ -79,6 +79,7 @@ def main():
                 if hasattr(draw_menu, 'dialogue_full'):
                     del draw_menu.dialogue_full
 
+        #MENU
             if current_state == STATE_MENU:
                 if event.type == pygame.KEYDOWN:
                     if event.key in [pygame.K_LEFT, pygame.K_a]:
@@ -95,6 +96,7 @@ def main():
                         elif menu_index == 3:
                             current_state = STATE_SPARE
 
+            #ACT
             elif current_state == STATE_ACT:
                 if event.type == pygame.KEYDOWN:
                     if event.key in [pygame.K_ESCAPE, pygame.K_RSHIFT]:
@@ -114,18 +116,22 @@ def main():
                     if event.key == pygame.K_RETURN:
                         begin_attack()
 
+
+        #ITEM
             elif current_state == STATE_ITEM:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         current_state = STATE_MENU
-                    elif event.key == pygame.K_RETURN:
-                        begin_attack()
+                    #elif event.key == pygame.K_RETURN:
+                     #   begin_attack()
 
+        #ATTACK
             elif current_state == STATE_ATTACK:
                 if event.type == pygame.KEYDOWN:
                     if event.key in [pygame.K_ESCAPE, pygame.K_RSHIFT]:
                         current_state = STATE_MENU
 
+        #SPARE
             elif current_state == STATE_SPARE:
                 if event.type == pygame.KEYDOWN:
                     if event.key in [pygame.K_ESCAPE, pygame.K_RSHIFT]:
@@ -149,7 +155,10 @@ def main():
         elif current_state == STATE_ITEM:
             heart_image = pygame.image.load("assets/heart.png").convert_alpha()
             heart_image = pygame.transform.scale(heart_image, (16, 16))
-            draw_item_screen(screen, heart_image, current_state, events, player)
+            eaten_flag = draw_item_screen(screen, heart_image, current_state, events, player)
+            if eaten_flag:
+                current_state = STATE_ATTACK
+                begin_attack()
             draw_menu(screen, buttons, menu_index)
             draw_hp_bar(screen, player.hp, MAX_HP)
 

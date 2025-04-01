@@ -92,7 +92,7 @@ class Sans_Bone_Gap_Low:
                 self.bones.remove(bone)
 
     def draw(self, screen):
-        FIGHT_BOX_RECT = pygame.Rect(175, 150, 250, 150)
+        FIGHT_BOX_RECT = pygame.Rect(200, 150, 200, 150) #THINK THIS IS GOOD?
         for bone in self.bones:
             bone.update()
             if FIGHT_BOX_RECT is None or bone.rect.colliderect(FIGHT_BOX_RECT):

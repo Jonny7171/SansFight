@@ -53,17 +53,21 @@ def draw_item_screen(screen, heart_image, current_state, events, player):
                         selected_option = options[draw_item_screen.selected_index]
                         print (selected_option)
                         if selected_option == "Pie":
-                            print ("HELLO")
                             player.hp = min(player.hp + 90, MAX_HP)
-                            print("Pie consumed!")
+                            print("Pie consumed! Gained 90 HP")
+                            return True
                         elif selected_option == "I. Noodels":
                             player.hp = min(player.hp + 90, MAX_HP)
-                            print("Instant Noodles consumed!")
+                            print("Instant Noodles consumed! Gained 90 HP")
+                            return True
                         elif selected_option == "Pancakes:P":
                             player.hp = min(player.hp + 60, MAX_HP)
-                            print("Pancakes consumed!")
+                            print("Pancakes consumed! Gained 60 HP")
+                            return True
                         elif selected_option == "L. Hero":
                             player.hp = min(player.hp + 50, MAX_HP)
+                            print("Large Hero Steak consumed! Gained 50 HP")
+                            return True
                         options.pop(draw_item_screen.selected_index)
                         draw_item_screen.selected_index = min(
                             draw_item_screen.selected_index, 
@@ -97,3 +101,6 @@ def draw_item_screen(screen, heart_image, current_state, events, player):
         else:
             no_items_text = font.render("No more items!", True, WHITE)
             screen.blit(no_items_text, (option1_x, option1_y))
+        
+
+        return False

@@ -35,7 +35,7 @@ class Bone:
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
-    def is_off_screen(self, screen_width, buffer=50):
+    def is_off_screen(self, screen_width, buffer=30):
         if self.speed < 0:  # Moving left
             return self.rect.right < -buffer  # fully off left side
         elif self.speed > 0:  # Moving right
