@@ -21,6 +21,7 @@ class Player:
         # Create the blue variant
         self.blue_image = self.create_blue_variant(base_image)
         self.image = self.red_image
+        self.original_image = self.image
         self.rect = self.image.get_rect(center=start_pos)
         self.hp = MAX_HP
         self.invincible = False

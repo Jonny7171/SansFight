@@ -1,8 +1,27 @@
 import pygame
 from settings import *
+from player import *
+
+#Adjust orientation of heart
+def update_heart_orientation(self, gravity_direction):
+    
+    if gravity_direction == "down":
+        self.image = self.image
+    elif gravity_direction == "up":
+        # Rotate 180 degrees
+        self.image = pygame.transform.rotate(self.blue_image, 180)
+    elif gravity_direction == "left":
+        # Rotate 90 degrees counter-clockwise so the heart "faces" left
+        self.image = pygame.transform.rotate(self.blue_image, -90)
+    elif gravity_direction == "right":
+        # Rotate 90 degrees clockwise so the heart "faces" right
+        self.image = pygame.transform.rotate(self.blue_image, 90)
+
+
+
+
 
 def handle_blue_mode_movement(self, keys, bounds_rect, gravity_direction="down"):
-    # Note: This function only handles blue_mode logic.
     if gravity_direction == "down":
         # Horizontal movement stays on the x-axis.
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -43,18 +62,19 @@ def handle_blue_mode_movement(self, keys, bounds_rect, gravity_direction="down")
             self.vel_y = 0
             self.on_ground = True
 
+
+        #ROOF CASE
     elif gravity_direction == "up":
-        print(gravity_direction, "Here")
         # Horizontal movement still on the x-axis.
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.rect.x -= HEART_SPEED
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.rect.x += HEART_SPEED
 
-        # Jump is now triggered by DOWN (.
+        # Jump
         if self.on_ground and (keys[pygame.K_DOWN] or keys[pygame.K_s]):
             self.jump_start_time = pygame.time.get_ticks()
-            self.vel_y = 4  # jump downward (opposite to upward gravity)
+            self.vel_y = 4  # jump downward 
             self.on_ground = False
             jumped_flag = True
 
@@ -166,4 +186,8 @@ def handle_blue_mode_movement(self, keys, bounds_rect, gravity_direction="down")
 
     # Finally, ensure the heart stays within the fight area.
     self.rect.clamp_ip(bounds_rect)
+    update_heart_orientation(self,gravity_direction)
+
+
+    
 

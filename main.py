@@ -125,7 +125,7 @@ def main():
         #ITEM
             elif current_state == STATE_ITEM:
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key in [pygame.K_ESCAPE, pygame.K_RSHIFT]:
                         current_state = STATE_MENU
                     #elif event.key == pygame.K_RETURN:
                      #   begin_attack()
@@ -169,8 +169,9 @@ def main():
 
         elif current_state == STATE_ATTACK:
             keys = pygame.key.get_pressed()
+            inner_box = fight_box.inflate(-MARGIN * 2, -MARGIN * 2)
             if fight_box and not isinstance(current_attack, SansSlamAttack):
-                inner_box = fight_box.inflate(-MARGIN * 2, -MARGIN * 2)
+                
                 player.handle_movement(keys, inner_box)
 
             draw_fight_box(screen, fight_box)
