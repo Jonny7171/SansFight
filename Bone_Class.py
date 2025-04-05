@@ -12,7 +12,6 @@ class Bone:
         # Scale proportionally
         self.image = pygame.transform.scale(self.image, (desired_height, desired_width))
         
-        # Optionally rotate the image. 
         if rotation is not None:
             self.image = pygame.transform.rotate(self.image, rotation)
         

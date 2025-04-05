@@ -38,6 +38,8 @@ class Player:
 
     def handle_movement(self, keys, bounds_rect, direction = "down"):
         if not self.blue_mode:
+            adjusted_bounds = bounds_rect.inflate(-4, -4) # to account for the heart size
+            self.rect.clamp_ip(adjusted_bounds)
             # Red heart: free movement
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 self.rect.x -= HEART_SPEED

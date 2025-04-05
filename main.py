@@ -42,7 +42,7 @@ def main():
     fight_box = None
     bones = []
 
-    attack_state = 3
+    attack_state = 1
     current_attack = None
 
     def begin_attack():
