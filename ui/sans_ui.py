@@ -1,6 +1,53 @@
 import pygame
 from settings import *
 
+
+# ui/sans_ui.py
+import pygame
+from settings import *
+
+class SansSpriteManager:
+    def __init__(self):
+        self.sprites = {
+            "normal": pygame.transform.scale(pygame.image.load("assets/sans.png").convert_alpha(), (110, 200)),
+            "blue_eye": pygame.transform.scale(pygame.image.load("assets/sans_blue_eye.png").convert_alpha(), (110, 200)),
+            "cut": pygame.transform.scale(pygame.image.load("assets/sans_cut.png").convert_alpha(), (110, 200)),
+            "hand_out": pygame.transform.scale(pygame.image.load("assets/sans_hand_out.png").convert_alpha(), (110, 200)),
+            "sweat": pygame.transform.scale(pygame.image.load("assets/sans_sweat.png").convert_alpha(), (110, 200)),
+            "wink": pygame.transform.scale(pygame.image.load("assets/sans_wink.png").convert_alpha(), (110, 200)),
+        }
+        self.current_name = "normal"
+        self.visible = True
+
+    def set(self, name):
+        if name in self.sprites:
+            self.current_name = name
+
+    def hide(self):
+        self.visible = False
+
+    def show(self):
+        self.visible = True
+
+    def draw(self, screen):
+        if not self.visible:
+            return
+        sprite = self.sprites[self.current_name]
+        x = WIDTH // 2 - sprite.get_width() // 2
+
+        # Y positions by name
+        y_lookup = {
+            "normal": SANS_NORMAL_Y,
+            "blue_eye": SANS_BLUR_EYE_Y,
+            "cut": SANS_CUT_Y,
+            "hand_out": SANS_HAND_OUT_Y,
+            "sweat": SANS_SWEAT_Y,
+            "wink": SANS_WINK_Y,
+        }
+        y = y_lookup.get(self.current_name, SANS_NORMAL_Y)
+        screen.blit(sprite, (x, y))
+
+
 def load_sans_assets():
 
     sans_normal = pygame.image.load("assets/sans.png").convert_alpha()

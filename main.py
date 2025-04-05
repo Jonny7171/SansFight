@@ -10,10 +10,11 @@ from ui.death_ui import play_death_animation
 from ui.act_ui import draw_act_screen
 from ui.item_ui import draw_item_screen
 from ui.mercy_ui import draw_mercy_screen
-from ui.sans_ui import load_sans_assets, draw_sans
+from ui.sans_ui import load_sans_assets, draw_sans, SansSpriteManager
 from attacks.Sans_bones_attack_low import Sans_Bone_Gap_Low
 from attacks.sans_gaster_blaster_attack import sans_gaster_blaster_attack
 from attacks.sansSlamAttack import SansSlamAttack
+from attacks.Sans_slam_multiple import SansSlamMultiple
 
 def main():
     global current_state, current_attack, attack_state, fight_box, sans_visible, bones, player
@@ -32,9 +33,7 @@ def main():
     pygame.mixer.music.load("sounds/megalovania.ogg")
     pygame.mixer.music.play(-1)
 
-    sans_assets = load_sans_assets()
-    current_sans_sprite = sans_assets["normal"]
-    current_sans_sprite_name = "normal"
+    sans_sprite_manager = SansSpriteManager()
     sans_visible = True
 
     dummy_fight_box = get_fight_box()
@@ -59,8 +58,9 @@ def main():
             player.set_blue_mode(False)
         elif attack_state == 3:
             fight_box = get_fight_box(150)  # Create fight_box FIRST
-            current_attack = SansSlamAttack(player, fight_box, direction=None)
+            current_attack = SansSlamMultiple(player, fight_box, direction=None, sans_sprite_manager=sans_sprite_manager)
             player.set_blue_mode(True)
+            
         current_state = STATE_ATTACK
         player.rect.center = fight_box.center
         bones = []
@@ -144,7 +144,7 @@ def main():
                     elif event.key == pygame.K_RETURN:
                         begin_attack()
 
-        draw_sans(screen, current_sans_sprite, current_sans_sprite_name, sans_visible=sans_visible)
+        sans_sprite_manager.draw(screen)
 
         if current_state == STATE_MENU:
             draw_menu(screen, buttons, menu_index, True)
@@ -170,7 +170,7 @@ def main():
         elif current_state == STATE_ATTACK:
             keys = pygame.key.get_pressed()
             inner_box = fight_box.inflate(-MARGIN * 2, -MARGIN * 2)
-            if fight_box and not isinstance(current_attack, SansSlamAttack):
+            if fight_box and not isinstance(current_attack, SansSlamMultiple):
                 
                 player.handle_movement(keys, inner_box)
 

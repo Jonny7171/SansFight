@@ -6,7 +6,7 @@ from player import *
 def update_heart_orientation(self, gravity_direction):
     
     if gravity_direction == "down":
-        self.image = self.image
+        self.image = self.blue_image
     elif gravity_direction == "up":
         # Rotate 180 degrees
         self.image = pygame.transform.rotate(self.blue_image, 180)
@@ -52,7 +52,7 @@ def handle_blue_mode_movement(self, keys, bounds_rect, gravity_direction="down")
             else:
                 return
 
-        # Gravity effect (accelerates downward).
+        # Gravity effect 
         self.vel_y += 0.5
         self.rect.y += int(self.vel_y)
 
@@ -94,7 +94,7 @@ def handle_blue_mode_movement(self, keys, bounds_rect, gravity_direction="down")
             else:
                 return
 
-        # Gravity effect (accelerates upward, so subtract from vel_y).
+        # Gravity effect 
         self.vel_y += -0.5
         self.rect.y += int(self.vel_y)
 
@@ -104,6 +104,8 @@ def handle_blue_mode_movement(self, keys, bounds_rect, gravity_direction="down")
             self.vel_y = 0
             self.on_ground = True
 
+
+#LEFT CASE
     elif gravity_direction == "left":
         # For left gravity, movement is along the vertical axis.
         if keys[pygame.K_UP] or keys[pygame.K_w]:
@@ -144,14 +146,16 @@ def handle_blue_mode_movement(self, keys, bounds_rect, gravity_direction="down")
             self.vel_x = 0
             self.on_ground = True
 
+
+
+#RIGHT CASE
     elif gravity_direction == "right":
-        # For right gravity, movement is along the vertical axis.
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             self.rect.y -= HEART_SPEED
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.rect.y += HEART_SPEED
 
-        # Jump is triggered by LEFT (jumping opposite to rightward gravity).
+        # Jump is triggered by LEFT 
         if self.on_ground and (keys[pygame.K_LEFT] or keys[pygame.K_a]):
             self.jump_start_time = pygame.time.get_ticks()
             self.vel_x = -4  # jump to the left
@@ -174,7 +178,7 @@ def handle_blue_mode_movement(self, keys, bounds_rect, gravity_direction="down")
             else:
                 return
 
-        # Gravity effect (accelerates rightward).
+        # Gravity effect 
         self.vel_x += 0.5
         self.rect.x += int(self.vel_x)
 
@@ -184,7 +188,7 @@ def handle_blue_mode_movement(self, keys, bounds_rect, gravity_direction="down")
             self.vel_x = 0
             self.on_ground = True
 
-    # Finally, ensure the heart stays within the fight area.
+
     self.rect.clamp_ip(bounds_rect)
     update_heart_orientation(self,gravity_direction)
 
