@@ -20,6 +20,7 @@ class sans_gaster_blaster_attack:
             self.spawn_next = now + 1000
             self.spawn_blaster()
 
+
         for blaster in self.blaster_list[:]:
             blaster.update()
 

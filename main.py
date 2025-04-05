@@ -48,16 +48,16 @@ def main():
     def begin_attack():
         global current_state, current_attack, attack_state, fight_box, sans_visible, bones, player
         if attack_state == 1:
-            fight_box = get_fight_box(250)  # First create fight_box
+            fight_box = get_fight_box(250) 
             current_attack = Sans_Bone_Gap_Low()
             player.set_blue_mode(True)
         elif attack_state == 2:
-            fight_box = get_fight_box(350)  # First create fight_box
+            fight_box = get_fight_box(350)
             current_attack = sans_gaster_blaster_attack(player)
             sans_visible = False
             player.set_blue_mode(False)
         elif attack_state == 3:
-            fight_box = get_fight_box(150)  # Create fight_box FIRST
+            fight_box = get_fight_box(150)
             current_attack = SansSlamMultiple(player, fight_box, direction=None, sans_sprite_manager=sans_sprite_manager)
             player.set_blue_mode(True)
             

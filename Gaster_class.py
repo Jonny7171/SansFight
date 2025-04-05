@@ -10,11 +10,13 @@ class GasterBlaster:
         self.original_aim = pygame.Vector2(target_pos)
         self.speed = 7
         self.arrived = False
-
         self.open_delay = open_delay
         self.fire_delay = fire_delay
         self.spawn_time = pygame.time.get_ticks()
         self.scale = scale
+        self.sound_effect = pygame.mixer.Sound("sounds/gaster_blaster.wav")
+        # Set a delay (in ms) before playing the sound
+        self.sound_delay = 150
 
         self.laser_duration = 1000
         self.fade_out_duration = 600
@@ -35,16 +37,16 @@ class GasterBlaster:
         # Calculate initial direction for laser
         initial_direction = self.move_target - self.position
         if initial_direction.length() == 0:
-            self.initial_direction = pygame.Vector2(1, 0)  # Default to right if no direction
+            self.initial_direction = pygame.Vector2(1, 0)
         else:
             self.initial_direction = initial_direction.normalize()
 
         # Set initial orientation
         if orientation is None:
             direction = self.move_target - self.position
-            self.angle = math.degrees(math.atan2(-direction.y, direction.x))  # Adjusted for sprite orientation
+            self.angle = math.degrees(math.atan2(-direction.y, direction.x))
         else:
-            self.angle = orientation + 90  # Assuming orientation is given as desired facing angle
+            self.angle = orientation + 90
 
         # Rotate images using the corrected angle
         self.closed_image = pygame.transform.rotate(self.closed_image_raw, self.angle)
@@ -64,6 +66,11 @@ class GasterBlaster:
         # 1. Move toward the target
         if not self.arrived:
             direction = self.move_target - self.position
+            # Only play the sound after the sound delay has passed
+            if (not self.arrived and not hasattr(self, 'sound_played') 
+                    and now - self.spawn_time >= self.sound_delay):
+                self.sound_effect.play()
+                self.sound_played = True
             if direction.length() > self.speed:
                 direction = direction.normalize() * self.speed
                 self.position += direction
@@ -79,21 +86,16 @@ class GasterBlaster:
         if not self.fired and now - self.spawn_time >= self.fire_delay:
             self.fired = True
             self.fire_time = now
-            beam_end = self.position + self.initial_direction * 2000  # Use precomputed direction
+            beam_end = self.position + self.initial_direction * 2000
             self.laser_beam = (self.position, beam_end)
 
         # 4. Handle laser duration and fade out
         if self.fired:
-            # Determine how long since firing began
             elapsed_since_fire = now - self.fire_time
-
-            # Compute fade out if we've passed the laser duration
             if elapsed_since_fire > self.laser_duration:
                 fade_time = elapsed_since_fire - self.laser_duration
                 fade_ratio = fade_time / self.fade_out_duration
                 self.alpha = max(0, 255 * (1 - fade_ratio))
-
-                # Remove the beam after the fade out is complete
                 if fade_ratio >= 1:
                     self.laser_beam = None
 
@@ -102,21 +104,16 @@ class GasterBlaster:
         rotated_image = pygame.transform.rotate(base_image, self.angle)
         self.rect = rotated_image.get_rect(center=self.position)
         
-        # Apply fade if necessary
         if self.alpha < 255:
             rotated_image = rotated_image.copy()
             rotated_image.fill((255, 255, 255, self.alpha), special_flags=pygame.BLEND_RGBA_MULT)
         
         self.image = rotated_image
 
-
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-    # Draw the laser beam, with fading alpha if applicable.
         if self.laser_beam:
-        # Create a temporary surface that supports per-pixel alpha
             laser_surface = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-        # Set laser color with the current alpha value
             laser_color = (255, 255, 255, self.alpha)
             pygame.draw.line(laser_surface, laser_color, self.laser_beam[0], self.laser_beam[1], 10)
             screen.blit(laser_surface, (0, 0))
