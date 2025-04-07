@@ -46,6 +46,8 @@ def main():
         reset_player_attack_animation()
         fight_box = get_fight_box(250)
         current_state = STATE_ATTACK_ANIMATION
+        if attack_state > 3:
+            current_state = STATE_VICTORY
     def begin_attack():
         global current_state, current_attack, attack_state, fight_box, sans_visible, bones, player
         if attack_state == 1:
@@ -61,6 +63,7 @@ def main():
             fight_box = get_fight_box(150)
             current_attack = SansSlamMultiple(player, fight_box, direction=None, sans_sprite_manager=sans_sprite_manager)
             player.set_blue_mode(True)
+
         current_state = STATE_ATTACK
         player.rect.center = fight_box.center
         bones = []
@@ -134,8 +137,19 @@ def main():
                             reset_dialogue()
                         else:
                             current_page = 0
-                            sans_sprite_manager.set("normal")
+                            if attack_state == 1:
+                                sans_sprite_manager.set("normal")
                             begin_attack()
+            elif current_state == STATE_VICTORY:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if current_page < len(dialogue) - 1:
+                            current_page += 1
+                            reset_dialogue()
+                        else:
+                            current_page = 0
+                            current_state = STATE_MENU
+                            sans_sprite_manager.set("sweat")
         # Draw Sans sprite
         if current_state not in [STATE_ATTACK_ANIMATION]:
             sans_sprite_manager.draw(screen)
@@ -180,6 +194,8 @@ def main():
                 current_state = STATE_GAME_OVER
             if current_attack.is_done():
                 attack_state += 1
+                if attack_state > 3:
+                    sans_sprite_manager.set("sweat")
                 current_attack = None
                 player.set_blue_mode(False)
                 sans_visible = True
@@ -195,9 +211,13 @@ def main():
             play_death_animation(screen, player.rect)
             running = False
         elif current_state == STATE_SANS_DIALOGUE:
-    # Draw fight elements so that everything visible during an attack remains visible
             draw_fight_box(screen, fight_box)
-            #player.draw(screen)
+            draw_sans_dialogue(screen, dialogue, current_page=current_page, sans_sprite_manager=sans_sprite_manager)
+            sans_sprite_manager.draw(screen)
+            draw_hp_bar(screen, player.hp, MAX_HP)
+        elif current_state == STATE_VICTORY:
+            dialogue = ["you did it... for now", "but this is not the end", "come back later"]
+            draw_fight_box(screen, fight_box)
             draw_sans_dialogue(screen, dialogue, current_page=current_page, sans_sprite_manager=sans_sprite_manager)
             sans_sprite_manager.draw(screen)
             draw_hp_bar(screen, player.hp, MAX_HP)

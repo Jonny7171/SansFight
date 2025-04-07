@@ -34,6 +34,9 @@ def draw_sans_dialogue(screen, full_text, current_page=0, sans_sprite_manager=No
         if page_text == 'it was a "slice" try':
             if sans_sprite_manager:
                 sans_sprite_manager.set("wink")
+        elif page_text == "come back later":
+            if sans_sprite_manager:
+                sans_sprite_manager.set("hand_out")
     else:
         page_text = full_text
 
