@@ -1,6 +1,7 @@
 import pygame
 from settings import *
 from ui.fight_ui import draw_fight_box, get_fight_box
+from ui.common_ui import draw_hp_bar
 
 attack_anim_timer = 0
 sans_x_offset = 0
@@ -20,7 +21,7 @@ def play_player_attack_animation(screen, player, sans_sprite_manager, fight_box)
     SLIDE_OUT_DURATION = 15
     SLASH_DURATION = 15
     MISS_DURATION = 50
-    SLIDE_IN_DURATION = 40
+    SLIDE_IN_DURATION = 30
     SLASH_OVERLAP = 5
     phase1_end = SLIDE_OUT_DURATION - SLASH_OVERLAP         
     phase2_end = phase1_end + SLASH_DURATION                  
@@ -31,7 +32,8 @@ def play_player_attack_animation(screen, player, sans_sprite_manager, fight_box)
     attack_anim_timer += 1
     origin_x, origin_y = (340, 80)
     draw_fight_box(screen, fight_box)
-    player.draw(screen)
+    draw_hp_bar(screen, player.hp, MAX_HP)
+    #player.draw(screen)
 
     # 1- Slide Out Sans
     if attack_anim_timer <= phase1_end:

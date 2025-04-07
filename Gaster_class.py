@@ -22,8 +22,11 @@ class GasterBlaster:
         self.fade_out_duration = 600
 
         # Load images
-        closed_img = pygame.image.load("assets/gaster_blaster.png").convert_alpha()
-        open_img = pygame.image.load("assets/gaster_blaster_open.png").convert_alpha()
+        #closed_img = pygame.image.load("assets/gaster_blaster.png").convert
+        closed_img = pygame.image.load("assets/gaster_blaster.png").convert()
+        closed_img.set_colorkey((0, 0, 0))
+        open_img = pygame.image.load("assets/gaster_blaster_open.png").convert()
+        open_img.set_colorkey((0, 0, 0))
 
         # Scale images
         w_closed = int(closed_img.get_width() * scale)
