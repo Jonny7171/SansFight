@@ -29,11 +29,13 @@ class SansSpriteManager:
     def show(self):
         self.visible = True
 
-    def draw(self, screen):
+    def draw(self, screen, offset_x=0):
         if not self.visible:
             return
         sprite = self.sprites[self.current_name]
         x = WIDTH // 2 - sprite.get_width() // 2
+        if offset_x != 0:
+            x += offset_x
 
         # Y positions by name
         y_lookup = {

@@ -15,6 +15,8 @@ from attacks.Sans_bones_attack_low import Sans_Bone_Gap_Low
 from attacks.sans_gaster_blaster_attack import sans_gaster_blaster_attack
 from attacks.sansSlamAttack import SansSlamAttack
 from attacks.Sans_slam_multiple import SansSlamMultiple
+from ui.attack_sans_ui import play_player_attack_animation, reset_player_attack_animation
+
 
 def main():
     global current_state, current_attack, attack_state, fight_box, sans_visible, bones, player
@@ -45,10 +47,16 @@ def main():
     attack_state = 1
     current_attack = None
 
+    def start_attack_animation():
+        global current_state, fight_box
+        reset_player_attack_animation()
+        fight_box = get_fight_box(250)
+        current_state = STATE_ATTACK_ANIMATION
+
     def begin_attack():
         global current_state, current_attack, attack_state, fight_box, sans_visible, bones, player
         if attack_state == 1:
-            fight_box = get_fight_box(250) 
+            fight_box = get_fight_box(250)
             current_attack = Sans_Bone_Gap_Low()
             player.set_blue_mode(True)
         elif attack_state == 2:
@@ -84,7 +92,7 @@ def main():
                 if hasattr(draw_menu, 'dialogue_full'):
                     del draw_menu.dialogue_full
 
-        #MENU
+            # Handle input for various states
             if current_state == STATE_MENU:
                 if event.type == pygame.KEYDOWN:
                     if event.key in [pygame.K_LEFT, pygame.K_a]:
@@ -93,7 +101,7 @@ def main():
                         menu_index = (menu_index + 1) % 4
                     if event.key == pygame.K_RETURN:
                         if menu_index == 0:
-                            begin_attack()
+                            start_attack_animation()
                         elif menu_index == 1:
                             current_state = STATE_ACT
                         elif menu_index == 2:
@@ -101,7 +109,6 @@ def main():
                         elif menu_index == 3:
                             current_state = STATE_SPARE
 
-            #ACT
             elif current_state == STATE_ACT:
                 if event.type == pygame.KEYDOWN:
                     if event.key in [pygame.K_ESCAPE, pygame.K_RSHIFT]:
@@ -119,33 +126,31 @@ def main():
             elif current_state == STATE_ACT_RESPONSE:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        begin_attack()
+                        start_attack_animation()
 
-
-        #ITEM
             elif current_state == STATE_ITEM:
                 if event.type == pygame.KEYDOWN:
                     if event.key in [pygame.K_ESCAPE, pygame.K_RSHIFT]:
                         current_state = STATE_MENU
-                    #elif event.key == pygame.K_RETURN:
-                     #   begin_attack()
 
-        #ATTACK
-            elif current_state == STATE_ATTACK:
-                if event.type == pygame.KEYDOWN:
-                    if event.key in [pygame.K_ESCAPE, pygame.K_RSHIFT]:
-                        current_state = STATE_MENU
-
-        #SPARE
             elif current_state == STATE_SPARE:
                 if event.type == pygame.KEYDOWN:
                     if event.key in [pygame.K_ESCAPE, pygame.K_RSHIFT]:
                         current_state = STATE_MENU
                     elif event.key == pygame.K_RETURN:
-                        begin_attack()
+                        start_attack_animation()
 
-        sans_sprite_manager.draw(screen)
+            # For attack states, allow a quick exit
+            elif current_state in [STATE_ATTACK, STATE_ATTACK_ANIMATION]:
+                if event.type == pygame.KEYDOWN:
+                    if event.key in [pygame.K_ESCAPE, pygame.K_RSHIFT]:
+                        current_state = STATE_MENU
 
+        # Draw Sans sprite
+        if current_state not in [STATE_ATTACK_ANIMATION]:
+            sans_sprite_manager.draw(screen)
+
+        # State-specific rendering and updates
         if current_state == STATE_MENU:
             draw_menu(screen, buttons, menu_index, True)
             draw_hp_bar(screen, player.hp, MAX_HP)
@@ -162,16 +167,19 @@ def main():
             heart_image = pygame.transform.scale(heart_image, (16, 16))
             eaten_flag = draw_item_screen(screen, heart_image, current_state, events, player)
             if eaten_flag:
-                current_state = STATE_ATTACK
-                begin_attack()
+                start_attack_animation()
             draw_menu(screen, buttons, menu_index)
             draw_hp_bar(screen, player.hp, MAX_HP)
+
+        elif current_state == STATE_ATTACK_ANIMATION:
+            animating = play_player_attack_animation(screen, player, sans_sprite_manager, fight_box)
+            if not animating:
+                begin_attack()
 
         elif current_state == STATE_ATTACK:
             keys = pygame.key.get_pressed()
             inner_box = fight_box.inflate(-MARGIN * 2, -MARGIN * 2)
             if fight_box and not isinstance(current_attack, SansSlamMultiple):
-                
                 player.handle_movement(keys, inner_box)
 
             draw_fight_box(screen, fight_box)
