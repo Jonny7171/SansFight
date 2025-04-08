@@ -7,7 +7,7 @@ A Python recreation of the Sans boss fight from *Undertale*, built using `pygame
 ## Features
 
 - 🦴 Bone attacks
-- 💬 In-game dialogue (yes, with puns)
+- 💬 In-game dialogue
 - ❤️ Custom heart sprite
 - 🧪 Modular UI components (menu, fight, death, mercy)
 - ⏱️ State-based animation system
@@ -31,6 +31,6 @@ A Python recreation of the Sans boss fight from *Undertale*, built using `pygame
 ### Setup
 ```bash
 git clone https://github.com/jonny7171/sans-fight.git
-cd sans-fight
+cd SansFight
 pip install pygame
 python main.py
