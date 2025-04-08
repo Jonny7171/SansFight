@@ -1,22 +1,38 @@
-# Sans-Fight
+# 🩸 Sans Fight
+
+A Python recreation of the Sans boss fight from *Undertale*, built using `pygame`. Includes animations, dialogue, and custom UI inspired by the original game. Designed as a fun programming and game dev project.
+
+---
+
+## 🎮 Features
+
+- 🦴 Bone attacks
+- 💬 In-game dialogue (yes, with puns)
+- ❤️ Custom heart sprite
+- 🧪 Modular UI components (menu, fight, death, mercy)
+- ⏱️ State-based animation system
+
+---
+
+## 📸 Screenshots
+
+_Add screenshots here by dragging images into the README on GitHub or using Markdown like:_
 
 
+---
 
-## Getting started
+## 🛠️ Installation
 
-Recreation of the Sans boss fight from Undertale
+### Requirements
+- Python 3.10+
+- pygame
 
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://git.uwaterloo.ca/j23gagno/sans-fight.git
-git branch -M main
-git push -uf origin main
-```
+### Setup
+```bash
+git clone https://github.com/jonny7171/sans-fight.git
+cd sans-fight
+pip install pygame
+python main.py
 
 ## Integrate with your tools
 
