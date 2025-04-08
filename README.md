@@ -14,7 +14,7 @@ A Python recreation of the Sans boss fight from *Undertale*, built using `pygame
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 ![image](https://github.com/user-attachments/assets/c16b09c8-a80c-4dd4-8de7-1e865b3a04fa)
 ![image](https://github.com/user-attachments/assets/7c46a99f-cfcd-4e46-828d-78ca3cd083e5)
